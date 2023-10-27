@@ -1,0 +1,5 @@
+# values.yaml
+replicaCount: 1
+image:
+  repository: php:7.4-apache
+  tag: latest

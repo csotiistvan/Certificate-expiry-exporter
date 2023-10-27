@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: exporter-php-configmap
+data:
+  index.php: |
+    <?php
+
+    //ini_set("display_startup_errors", 1);
+    //ini_set("display_errors", 1);
+    //error_reporting(-1);
+
+    $beginpem = "-----BEGIN CERTIFICATE-----\n";
+    $endpem = "-----END CERTIFICATE-----\n";
+
+    //============Curl request from a stackoverflow template===========
+    //$data = array('key'=>'value');
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://tng-dev.who.int/trustList");
+    //curl_setopt($ch, CURLOPT_URL, "https://vanenet.hu");
+    curl_setopt($ch, CURLOPT_PORT , 443);
+    curl_setopt($ch, CURLOPT_VERBOSE, 0);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_SSLCERT, getcwd() . "/certs/client.crt");
+    curl_setopt($ch, CURLOPT_SSLKEY, getcwd() . "/certs/client.key");
+    //curl_setopt($ch, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt");
+    //curl_setopt($ch, CURLOPT_POST, 0)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+
+    $response = curl_exec($ch);
+    //$info =curl_errno($ch)>0 ? array("curl_error_".curl_errno($ch)=>curl_error($ch)) : curl_getinfo($ch);
+    //print_r($info);
+    curl_close($ch);
+    //=========================Curl end ==============================
+
+
+    //echo $response;
+
+
+    //========================Create a reply for Prometheus===============
+    $cert_json=json_decode($response,true);
+    $now=time();
+
+    foreach ($cert_json as $cert_array_key => $cert_array) {
+
+                            $cert_type=$cert_array["certificateType"];
+                            $cert_country=$cert_array["country"];
+                            $cert_kid=$cert_array["kid"];
+                            $cert_rawData=$cert_array["rawData"];
+                            $cert_signature=$cert_array["signature"];
+                            $cert_thumbprint=$cert_array["thumbprint"];
+
+                            $fullpem = $beginpem.$cert_rawData."\n".$endpem;
+                            $cert = openssl_x509_read( $fullpem );
+                            $cert_sha256 = openssl_x509_fingerprint($cert, 'sha256'); // md5 hash
+                            $certinfo = openssl_x509_parse($cert);
+                            $cert_expiry_date=$certinfo["validTo_time_t"];
+                            openssl_x509_free( $cert );
+                            echo 'certificate_expiry{sha256="'.$cert_thumbprint.'",C="'.$cert_country.'",type="'.$cert_type.'",kid="'.$cert_kid.'"} '.$cert_expiry_date."\n";
+    //                      echo 'certificate_seen_bnew{sha256="'.$cert_thumbprint.'",C="'.$cert_country.'",type="'.$cert_type.'"} '.$now."\n";
+    }
+    ?>

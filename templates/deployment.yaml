@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-expiry-exporter
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: cert-expiry-exporter
+  template:
+    metadata:
+      labels:
+        run: cert-expiry-exporter
+    spec:
+      containers:
+        - name: cert-expiry-exporter
+          image: php:7.4-apache
+          ports:
+            - containerPort: 80  # The port on which the web server will listen
+          volumeMounts:
+            - name: exporter-php
+              mountPath: /var/www/html
+            - name: blackbox-certificates
+              mountPath: /var/www/html/certs
+      volumes:
+        - name: exporter-php
+          configMap:
+            name: exporter-php-configmap  # ConfigMap defined separately
+        - name: blackbox-certificates
+          secret:
+            defaultMode: 420
+            secretName: blackbox-certificates

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cert-expiry-exporter
+  namespace: monitoring
+  labels:
+    run: cert-expiry-exporter
+spec:
+  selector:
+    run: cert-expiry-exporter
+    # app.kubernetes.io/name: cert-expiry-exporter  # Match the labels to your Pod
+  ports:
+    - name: http
+      protocol: TCP
+      port: 420
+      targetPort: 80  # The port your PHP container is listening on
+  # type: NodePort  # Expose the service using NodePort
