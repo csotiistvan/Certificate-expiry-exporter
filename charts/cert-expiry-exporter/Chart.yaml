@@ -1,10 +1,5 @@
 apiVersion: v2
 name: cert-expiry-exporter
 description: A Helm chart for deploying a PHP exporter pod to track cert expiry in the database
-version: 1.0.0
-keywords:
-  - monitoring
+version: 1.0.1
 icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cryptpad.png
-maintainers:
-  - name: istvan.csoti
-    email: istvan.csoti@t-systems.com

@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: cert-expiry-exporter
   namespace: monitoring
+  labels:
+  {{- include "cert-expiry-exporter.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
