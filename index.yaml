@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   cert-expiry-exporter:
   - apiVersion: v2
+    created: "2024-06-28T13:27:03.654959818Z"
+    description: A Helm chart for deploying a PHP exporter pod to track cert expiry
+      in the database
+    digest: d6a1acf3a3eba829bdf9a6a89eebf34da1072a4b7aba560486116709c8a09dca
+    icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/cryptpad.png
+    name: cert-expiry-exporter
+    urls:
+    - https://github.com/csotiistvan/Certificate-expiry-exporter/releases/download/cert-expiry-exporter-1.0.2/cert-expiry-exporter-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
     created: "2024-01-30T15:57:01.686108997Z"
     description: A Helm chart for deploying a PHP exporter pod to track cert expiry
       in the database
@@ -26,4 +36,4 @@ entries:
     urls:
     - https://github.com/csotiistvan/Certificate-expiry-exporter/releases/download/cert-expiry-exporter-1.0.0/cert-expiry-exporter-1.0.0.tgz
     version: 1.0.0
-generated: "2024-01-30T15:57:01.686123404Z"
+generated: "2024-06-28T13:27:03.654978764Z"
